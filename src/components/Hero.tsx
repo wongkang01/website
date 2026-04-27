@@ -50,15 +50,25 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="relative pt-12 md:pt-24 border-l border-white/10 pl-12"
+        <div
+          className="relative pt-12 md:pt-24 pl-12"
         >
-          <div className="text-[10px] uppercase tracking-widest font-black text-white/30 mb-8 absolute -left-4 top-24 -rotate-90 origin-left">
+          {/* Animated vertical line */}
+          <motion.div 
+            initial={{ height: 0 }}
+            animate={{ height: "100%" }}
+            transition={{ duration: 1.5, ease: "easeInOut", delay: 0.6 }}
+            className="absolute left-0 top-0 w-px bg-white/10 origin-top"
+          />
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="text-[10px] uppercase tracking-widest font-black text-white/30 mb-8 absolute -left-4 top-24 -rotate-90 origin-left"
+          >
             Education
-          </div>
+          </motion.div>
 
           <div className="space-y-12">
             {[
@@ -80,7 +90,13 @@ export default function Hero() {
                 date: "2018 — 2019" 
               }
             ].map((edu, i) => (
-              <div key={i} className="group relative">
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 + (i * 0.2) }}
+                className="group relative"
+              >
                 <div className="absolute -left-[3.25rem] top-1.5 w-3 h-3 rounded-full bg-white opacity-20 group-hover:opacity-100 transition-opacity" />
                 {edu.current && (
                   <span className="text-[10px] font-bold text-brand uppercase tracking-widest mb-1 block">Current</span>
@@ -91,10 +107,10 @@ export default function Hero() {
                   <span className="text-white/40 text-xs font-mono">{edu.date}</span>
                   {edu.meta && <span className="text-brand/60 text-[10px] font-bold uppercase">{edu.meta}</span>}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
 
       <motion.div 

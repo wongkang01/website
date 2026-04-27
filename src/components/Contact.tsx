@@ -21,7 +21,7 @@ export default function Contact() {
           <span className="text-xs font-black uppercase tracking-[0.5em] text-black/40 mb-8 block">Let's Connect</span>
           <h2 className="text-7xl md:text-[10rem] font-bold tracking-tighter leading-[0.8] mb-16">
             Build something <br />
-            <span className="italic text-brand bg-black text-white px-8 -mx-8 inline-block mt-4">extraordinary</span> <br />
+            <span className="italic text-brand">extraordinary</span> <br />
             together.
           </h2>
 
