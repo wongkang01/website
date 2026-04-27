@@ -1,82 +1,102 @@
-import React, { useRef } from 'react';
-import MasonryGrid from './MasonryGrid';
-import FeaturedProjectCard from './FeaturedProjectCard';
-import { motion, useScroll, useTransform } from 'motion/react';
-
-const featuredProjects = [
-  {
-    id: "retake",
-    name: "Retake",
-    tagline: "Video snippets, Tactical Intelligence",
-    type: "PROJECT",
-    description: "AI-powered tactical search platform for professional VALORANT coaches. Currently being evaluated by the head coach of Paper Rex (VCT 2025 champions).",
-    stack: ["React 19", "TanStack Start", "t-vector", "Gemini Flash", "Supabase"],
-    highlight: "PAPER REX EVALUATION"
-  },
-  {
-    id: "affine-cli",
-    name: "AFFINE CLI",
-    tagline: "Open Source Knowledge Workspace",
-    type: "OPEN SOURCE",
-    description: "Designed and built a CLI tool (5,000 lines TypeScript) for AFFINE, adopting a CLI-over-MCP architecture. Enables AI agents to programmatically read/write documents.",
-    stack: ["TypeScript", "Fly.io", "SQLite", "Node.js", "GraphQL"],
-    highlight: "35K+ STARS"
-  },
-  {
-    id: "agora",
-    name: "Agora",
-    tagline: "Autonomous AI Shopping Agent",
-    type: "HACKATHON",
-    description: "Designed the agentic architecture integrating ERC-6004 agent discovery and xMTp protocol on Hedera's testnet. Shortlisted Finalist.",
-    stack: ["ERC-6004", "xMTp", "Hedera", "LangGraph", "React"],
-    highlight: "SHORTLISTED FINALIST"
-  }
-];
+import React, { useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+} from "motion/react";
+import MasonryGrid from "./MasonryGrid";
+import ExpandedRow from "./ExpandedRow";
+import { featuredProjects, otherProjects } from "./data";
 
 export default function MyWorks() {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+  const [isExpandedPhase, setIsExpandedPhase] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "center center"]
+    offset: ["start start", "end end"],
   });
 
-  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const textScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const textScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.9]);
+
+  // Overall grid slides up from the bottom early in the scroll
+  const gridY = useTransform(scrollYProgress, [0, 0.3], ["100vh", "0vh"]);
+
+  // Parallax upwards for individual columns
+  const col1Y = useTransform(scrollYProgress, [0.35, 0.8], ["0vh", "-150vh"]);
+  const col5Y = useTransform(scrollYProgress, [0.35, 0.8], ["0vh", "-150vh"]);
+
+  // Outer columns slide up entirely, while top of 2,3,4 slide out, leaving featured behind.
+  const col2OtherY = useTransform(
+    scrollYProgress,
+    [0.35, 0.8],
+    ["0vh", "-100vh"],
+  );
+  const col3OtherY = useTransform(
+    scrollYProgress,
+    [0.35, 0.8],
+    ["0vh", "-80vh"],
+  );
+  const col4OtherY = useTransform(
+    scrollYProgress,
+    [0.35, 0.8],
+    ["0vh", "-100vh"],
+  );
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest > 0.45 && !isExpandedPhase) {
+      setIsExpandedPhase(true);
+      if (hoveredIndex === null) setHoveredIndex(1);
+    } else if (latest <= 0.45 && isExpandedPhase) {
+      setIsExpandedPhase(false);
+      setHoveredIndex(null);
+    }
+  });
 
   return (
-    <section id="projects" className="py-32 px-4 md:px-12 bg-black text-white relative">
-      <div className="max-w-[1400px] mx-auto min-h-screen relative" ref={containerRef}>
-        
-        {/* Fading text that cards slide over */}
-        <motion.div 
-          style={{ opacity: textOpacity, scale: textScale }}
-          className="sticky top-64 flex flex-col items-center text-center z-0 pt-32"
-        >
-          <span className="text-[10px] uppercase tracking-[0.4em] text-white/40 mb-4 block">Projects • Hackathons • Open Source</span>
-          <h2 className="text-6xl md:text-9xl font-bold tracking-tighter">My <span className="italic">Works</span></h2>
-          <p className="mt-8 text-white/40 text-lg uppercase tracking-widest font-medium max-w-2xl">
-            From esports AI to hackathon finalists to 35k+ star open source
-          </p>
-        </motion.div>
+    <section id="projects" className="bg-black text-white relative">
+      <div className="h-[350vh] relative w-full" ref={containerRef}>
+        <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
+          <motion.div
+            style={{ opacity: textOpacity, scale: textScale }}
+            className="absolute flex flex-col items-center text-center z-0 px-4"
+          >
+            <span className="text-[10px] uppercase tracking-[0.4em] text-white/40 mb-4 block">
+              Projects • Hackathons • Open Source
+            </span>
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter">
+              My <span className="italic">Works</span>
+            </h2>
+            <p className="mt-8 text-white/40 text-sm md:text-lg uppercase tracking-widest font-medium max-w-2xl px-4">
+              From esports AI to hackathon finalists to 35k+ star open source
+            </p>
+          </motion.div>
 
-        {/* Masonry that slides up over the text */}
-        <div className="relative z-10 pt-[50vh]">
-          <MasonryGrid />
-        </div>
+          <MasonryGrid
+            isExpandedPhase={isExpandedPhase}
+            gridY={gridY}
+            colTransforms={{ col1Y, col2OtherY, col3OtherY, col4OtherY, col5Y }}
+            featuredProjects={featuredProjects}
+            otherProjects={otherProjects}
+          />
 
-        {/* Expanding Featured Projects */}
-        <div className="space-y-4 relative z-20 mt-32">
-          {featuredProjects.map((proj) => (
-            <FeaturedProjectCard key={proj.id} project={proj} />
-          ))}
+          {isExpandedPhase && (
+            <ExpandedRow
+              hoveredIndex={hoveredIndex}
+              setHoveredIndex={setHoveredIndex}
+              featuredProjects={featuredProjects}
+            />
+          )}
         </div>
+      </div>
 
-        <div className="mt-32 text-center pb-24 relative z-20">
-            <button className="px-12 py-6 bg-white text-black font-black uppercase tracking-[0.3em] text-xs hover:bg-brand transition-colors">
-                View All Projects
-            </button>
-        </div>
+      <div className="pb-32 text-center relative z-20 bg-black">
+        <button className="px-12 py-6 bg-white text-black font-black uppercase tracking-[0.3em] text-xs hover:bg-brand transition-colors">
+          View All Projects
+        </button>
       </div>
     </section>
   );

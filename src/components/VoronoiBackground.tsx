@@ -1,6 +1,5 @@
-import React, { useRef, useMemo, useEffect } from 'react';
-import * as THREE from 'three';
-import { useFrame, Canvas, useThree } from '@react-three/fiber';
+import React, { useRef, useMemo, useEffect } from "react";
+import * as THREE from "three";
 
 // Since I don't have @react-three/fiber pre-installed, I should check if I can use it.
 // Actually, the user didn't mention it, but it's the standard for Three in React.
@@ -15,16 +14,21 @@ export default function VoronoiBackground() {
     if (!containerRef.current) return;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000,
+    );
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '0';
-    renderer.domElement.style.left = '0';
-    renderer.domElement.style.width = '100%';
-    renderer.domElement.style.height = '100%';
-    renderer.domElement.style.pointerEvents = 'none'; // let clicks pass through to UI underneath if needed
+    renderer.domElement.style.position = "absolute";
+    renderer.domElement.style.top = "0";
+    renderer.domElement.style.left = "0";
+    renderer.domElement.style.width = "100%";
+    renderer.domElement.style.height = "100%";
+    renderer.domElement.style.pointerEvents = "none"; // let clicks pass through to UI underneath if needed
     containerRef.current.appendChild(renderer.domElement);
 
     const particlesCount = 100;
@@ -42,13 +46,13 @@ export default function VoronoiBackground() {
     }
 
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
     const material = new THREE.PointsMaterial({
       color: 0xffffff,
       size: 0.05,
       transparent: true,
-      opacity: 0.5
+      opacity: 0.5,
     });
 
     const points = new THREE.Points(geometry, material);
@@ -58,12 +62,15 @@ export default function VoronoiBackground() {
     const lineMaterial = new THREE.LineBasicMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.1
+      opacity: 0.1,
     });
 
     const lineGeometry = new THREE.BufferGeometry();
     const linePositions = new Float32Array(particlesCount * particlesCount * 6);
-    lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+    lineGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(linePositions, 3),
+    );
     const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
     scene.add(lines);
 
@@ -74,7 +81,7 @@ export default function VoronoiBackground() {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -95,13 +102,13 @@ export default function VoronoiBackground() {
 
         // Highlight nodes near cursor
         const distToMouse = Math.sqrt(
-          Math.pow(positions[i * 3] - pos.x, 2) + 
-          Math.pow(positions[i * 3 + 1] - pos.y, 2)
+          Math.pow(positions[i * 3] - pos.x, 2) +
+            Math.pow(positions[i * 3 + 1] - pos.y, 2),
         );
 
         const highlightFactor = Math.max(0, 1 - distToMouse / 3);
         // We could use this highlight factor to adjust node sizes or colors if we used separate attributes
-        
+
         // Bounds check
         if (Math.abs(positions[i * 3]) > 7) velocities[i * 3] *= -1;
         if (Math.abs(positions[i * 3 + 1]) > 5) velocities[i * 3 + 1] *= -1;
@@ -115,31 +122,36 @@ export default function VoronoiBackground() {
           const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
           if (dist < 2.0) {
-             // Lines near mouse are brighter
-             const distLineToMouse = Math.sqrt(
-               Math.pow((positions[i * 3] + positions[j * 3]) / 2 - pos.x, 2) +
-               Math.pow((positions[i * 3 + 1] + positions[j * 3 + 1]) / 2 - pos.y, 2)
-             );
-             
-             const lineHighlight = Math.max(0, 1 - distLineToMouse / 2);
-             // Since we use LineSegments with a single material, we can't easily vary opacity per segment 
-             // without using custom shaders or vertex colors.
-             // For now, we'll just push the positions. To vary opacity, I'd need color attribute.
-             
-             linePositions[lineIdx++] = positions[i * 3];
-             linePositions[lineIdx++] = positions[i * 3 + 1];
-             linePositions[lineIdx++] = positions[i * 3 + 2];
-             linePositions[lineIdx++] = positions[j * 3];
-             linePositions[lineIdx++] = positions[j * 3 + 1];
-             linePositions[lineIdx++] = positions[j * 3 + 2];
+            // Lines near mouse are brighter
+            const distLineToMouse = Math.sqrt(
+              Math.pow((positions[i * 3] + positions[j * 3]) / 2 - pos.x, 2) +
+                Math.pow(
+                  (positions[i * 3 + 1] + positions[j * 3 + 1]) / 2 - pos.y,
+                  2,
+                ),
+            );
+
+            const lineHighlight = Math.max(0, 1 - distLineToMouse / 2);
+            // Since we use LineSegments with a single material, we can't easily vary opacity per segment
+            // without using custom shaders or vertex colors.
+            // For now, we'll just push the positions. To vary opacity, I'd need color attribute.
+
+            linePositions[lineIdx++] = positions[i * 3];
+            linePositions[lineIdx++] = positions[i * 3 + 1];
+            linePositions[lineIdx++] = positions[i * 3 + 2];
+            linePositions[lineIdx++] = positions[j * 3];
+            linePositions[lineIdx++] = positions[j * 3 + 1];
+            linePositions[lineIdx++] = positions[j * 3 + 2];
           }
         }
       }
 
-
       geometry.attributes.position.needsUpdate = true;
-      lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions.slice(0, lineIdx), 3));
-      
+      lineGeometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(linePositions.slice(0, lineIdx), 3),
+      );
+
       renderer.render(scene, camera);
     };
 
@@ -150,11 +162,11 @@ export default function VoronoiBackground() {
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResize);
       containerRef.current?.removeChild(renderer.domElement);
     };
   }, []);
