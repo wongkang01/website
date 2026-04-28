@@ -5,14 +5,14 @@ import VoronoiBackground from "./VoronoiBackground";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center px-8 md:px-24 overflow-hidden pt-32">
+    <section className="relative isolate min-h-screen flex flex-col justify-center px-8 md:px-24 overflow-hidden pt-32">
       <VoronoiBackground />
 
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="mb-8"
+        className="relative z-10 mb-8"
       >
         <span className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 text-[10px] uppercase tracking-[0.2em] font-bold text-brand">
           <span className="relative flex h-2 w-2">
@@ -23,7 +23,7 @@ export default function Hero() {
         </span>
       </motion.div>
 
-      <div className="grid md:grid-cols-[1.5fr_1fr] gap-12 items-start">
+      <div className="relative z-10 grid md:grid-cols-[1.5fr_1fr] gap-12 items-start">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ export default function Hero() {
       <motion.div
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30"
+        className="absolute bottom-12 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30"
       >
         <span className="text-[10px] uppercase tracking-[0.3em] font-black">
           Scroll
