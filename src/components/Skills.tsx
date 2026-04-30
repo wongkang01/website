@@ -75,13 +75,13 @@ export default function Skills() {
           viewport={{ once: true }}
           className="text-center mb-32"
         >
-          <span className="text-[10px] uppercase tracking-[0.5em] font-black text-white/40 mb-4 block">
+          <span className="text-[10px] uppercase tracking-[0.25em] font-black text-white/40 mb-4 block">
             Technical Arsenal
           </span>
-          <h2 className="text-6xl md:text-8xl font-bold tracking-tighter">
+          <h2 className="font-display text-[3rem] font-bold tracking-tighter">
             Built with <span className="text-white italic">precision</span>
           </h2>
-          <p className="mt-8 text-white/40 max-w-xl mx-auto text-lg leading-relaxed">
+          <p className="mt-8 text-white/40 max-w-xl mx-auto text-base leading-relaxed">
             Shipping across the full stack — from LLM agent orchestration to
             cloud infrastructure to pixel-perfect frontends.
           </p>
@@ -97,7 +97,7 @@ export default function Skills() {
               transition={{ delay: i * 0.1 }}
               className="group p-8 border border-white/5 hover:border-brand/40 transition-colors relative h-full"
             >
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/30 group-hover:text-brand transition-colors block mb-6">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/30 group-hover:text-brand transition-colors block mb-6">
                 {group.category}
               </span>
               <div className="space-y-4">
@@ -114,7 +114,7 @@ export default function Skills() {
                         }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-white/60 group-hover:text-white transition-colors">
+                    <span className="text-[11px] font-medium text-white/60 group-hover:text-white transition-colors">
                       {item}
                     </span>
                   </div>

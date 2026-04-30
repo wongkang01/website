@@ -1,140 +1,65 @@
 import React from "react";
-import { motion, MotionValue } from "motion/react";
 import { cn } from "../../lib/utils";
+import ProjectCard from "./ProjectCard";
 
 export default function MasonryGrid({
-  isExpandedPhase,
-  gridY,
-  colTransforms,
-  featuredProjects,
+  featuredProgress,
   otherProjects,
 }: {
-  isExpandedPhase: boolean;
-  gridY: MotionValue<string>;
-  colTransforms: any;
-  featuredProjects: any[];
+  featuredProgress: number;
   otherProjects: any[];
 }) {
-  const { col1Y, col2OtherY, col3OtherY, col4OtherY, col5Y } = colTransforms;
+  // 13-card layout (5,5,3 row-wise; 2,3,3,3,2 col-wise).
+  // Cols 1 & 5: 2 tall rectangles (aspect-[2/3]).
+  // Cols 2, 3, 4: 2 squares + featured row from ExpandedRow.
+  const col1 = [otherProjects[0], otherProjects[5]]; // FS, RP
+  const col2OtherTop = [otherProjects[1], otherProjects[6]]; // DR, OS
+  const col3OtherTop = [otherProjects[2], otherProjects[7]]; // WD, CY
+  const col4OtherTop = [otherProjects[3], otherProjects[8]]; // RC, AE
+  const col5 = [otherProjects[4], otherProjects[9]]; // SF, DS
 
-  // Map the projects to columns
-  // col 1: other, other
-  const col1 = [otherProjects[0], otherProjects[1]];
-  // col 2: other, featured[0], other
-  const col2OtherTop = [otherProjects[2]];
-  const col2Feat = featuredProjects[0];
-  const col2OtherBottom = [otherProjects[3]];
-  // col 3: other, featured[1], other
-  const col3OtherTop = [otherProjects[4]];
-  const col3Feat = featuredProjects[1];
-  const col3OtherBottom = [otherProjects[5]];
-  // col 4: other, featured[2], other
-  const col4OtherTop = [otherProjects[6]];
-  const col4Feat = featuredProjects[2];
-  const col4OtherBottom = [otherProjects[7]];
-  // col 5: other, other
-  const col5 = [otherProjects[8], otherProjects[9]];
-
-  const renderOther = (p: any) => (
-    <div
+  const renderOther = (p: any, aspectClass: string) => (
+    <ProjectCard
       key={p.id}
-      className={cn(
-        "bg-[#111] border border-white/10 p-6 flex flex-col justify-between aspect-square w-full opacity-60 hover:opacity-100 transition-opacity cursor-pointer",
-      )}
-    >
-      <div className="text-[10px] uppercase font-black text-white/20">
-        Project
-      </div>
-      <div>
-        <h3 className="text-3xl font-black mb-1">{p.id.toUpperCase()}</h3>
-        <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">
-          {p.title}
-        </p>
-      </div>
-    </div>
+      type="Project"
+      initials={p.id.toUpperCase()}
+      name={p.title}
+      className={`${aspectClass} w-full`}
+    />
   );
 
-  const renderFeatBase = (p: any, i: number) => {
-    // This is the placeholder that morphs into the expanded version
-    // If it's expanded phase, we hide this block using layoutId magic or just opacity
-    return (
-      <motion.div
-        layoutId={`feat-${i}`}
-        key={p.id}
-        className={cn(
-          "bg-[#111] border border-white/10 p-6 flex flex-col justify-between aspect-square w-full cursor-pointer relative z-10",
-          isExpandedPhase ? "opacity-0 pointer-events-none" : "opacity-100",
-        )}
-      >
-        <div className="text-[10px] uppercase font-black text-white/20">
-          Project
-        </div>
-        <div>
-          <h3 className="text-3xl font-black mb-1">{p.id.toUpperCase()}</h3>
-          <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">
-            Featured
-          </p>
-        </div>
-      </motion.div>
-    );
-  };
-
   return (
-    <motion.div
-      style={{ y: gridY }}
+    <div
       className={cn(
-        "absolute inset-0 z-10 grid grid-cols-2 lg:grid-cols-5 gap-4 px-4 pointer-events-none",
-        isExpandedPhase ? "" : "pointer-events-auto",
+        "myworks-grid absolute inset-0 z-10 grid grid-cols-2 lg:grid-cols-5 gap-4 px-[6vw] pointer-events-none",
+        featuredProgress < 0.12 ? "pointer-events-auto" : "",
       )}
     >
-      {/* Col 1 */}
-      <motion.div
-        style={{ y: col1Y }}
-        className="hidden lg:flex flex-col gap-4 mt-[30vh]"
-      >
-        {col1.map(renderOther)}
-      </motion.div>
-
-      {/* Col 2 */}
-      <div className="flex flex-col gap-4 mt-[10vh]">
-        <motion.div style={{ y: col2OtherY }} className="flex flex-col gap-4">
-          {col2OtherTop.map(renderOther)}
-        </motion.div>
-        {renderFeatBase(col2Feat, 0)}
-        <motion.div style={{ y: col2OtherY }} className="flex flex-col gap-4">
-          {col2OtherBottom.map(renderOther)}
-        </motion.div>
+      <div className="myworks-col-1 hidden lg:flex flex-col gap-4 mt-[2vh]">
+        {col1.map((p) => renderOther(p, "aspect-[2/3]"))}
       </div>
 
-      {/* Col 3 */}
-      <div className="hidden lg:flex flex-col gap-4 mt-[25vh]">
-        <motion.div style={{ y: col3OtherY }} className="flex flex-col gap-4">
-          {col3OtherTop.map(renderOther)}
-        </motion.div>
-        {renderFeatBase(col3Feat, 1)}
-        <motion.div style={{ y: col3OtherY }} className="flex flex-col gap-4">
-          {col3OtherBottom.map(renderOther)}
-        </motion.div>
+      <div className="flex flex-col gap-4 mt-[6vh]">
+        <div className="myworks-col-2-other flex flex-col gap-4">
+          {col2OtherTop.map((p) => renderOther(p, "aspect-square"))}
+        </div>
       </div>
 
-      {/* Col 4 */}
-      <div className="flex flex-col gap-4 mt-[15vh]">
-        <motion.div style={{ y: col4OtherY }} className="flex flex-col gap-4">
-          {col4OtherTop.map(renderOther)}
-        </motion.div>
-        {renderFeatBase(col4Feat, 2)}
-        <motion.div style={{ y: col4OtherY }} className="flex flex-col gap-4">
-          {col4OtherBottom.map(renderOther)}
-        </motion.div>
+      <div className="hidden lg:flex flex-col gap-4 mt-[10vh]">
+        <div className="myworks-col-3-other flex flex-col gap-4">
+          {col3OtherTop.map((p) => renderOther(p, "aspect-square"))}
+        </div>
       </div>
 
-      {/* Col 5 */}
-      <motion.div
-        style={{ y: col5Y }}
-        className="hidden lg:flex flex-col gap-4 mt-[40vh]"
-      >
-        {col5.map(renderOther)}
-      </motion.div>
-    </motion.div>
+      <div className="flex flex-col gap-4 mt-[6vh]">
+        <div className="myworks-col-4-other flex flex-col gap-4">
+          {col4OtherTop.map((p) => renderOther(p, "aspect-square"))}
+        </div>
+      </div>
+
+      <div className="myworks-col-5 hidden lg:flex flex-col gap-4 mt-[2vh]">
+        {col5.map((p) => renderOther(p, "aspect-[2/3]"))}
+      </div>
+    </div>
   );
 }
